@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Infrastructure.Photos;
 using API.SignalR;
+using Application.Profiles;
 
 namespace API
 {
@@ -77,7 +78,7 @@ namespace API
                 });
             });
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
-            
+
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -96,7 +97,7 @@ namespace API
                         {
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
-                            if(!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
                             {
                                 context.Token = accessToken;
                             }
@@ -104,9 +105,10 @@ namespace API
                         }
                     };
                 });
-            services.AddScoped<IJwtGenerator, JwtGenerator> ();
-            services.AddScoped<IUserAccessor, UserAccessor> ();
-            services.AddScoped<IPhotoAccessor, PhotoAccessor> ();
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
+            services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.AddScoped<IProfileReader, ProfileReader>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
         }
 
